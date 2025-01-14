@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include </opt/homebrew/include/sdl2/SDL.h>
 
 
@@ -6,7 +7,30 @@
 #define HEIGHT 600
 #define COLOR_WHITE 0xffffffff
 
+typedef struct 
+{
+    int x;
+    int y;
+    int r;
+} Circle;
 
+// function to create a filled circle
+void FillCircle(SDL_Surface *s, Circle circle, Uint32 color) {
+   // looping the pixel length, from x-r to x+r and same for y coordinate for each pixel
+   double radius_squared = pow(circle.r, 2);
+   for (double x = circle.x-circle.r; x <= circle.x+circle.r; x++) {
+    for (double y = circle.y-circle.r; y <= circle.y+circle.r; y++)
+    {
+        double distance_squared = pow(x - circle.x, 2) + pow(y - circle.y, 2);
+        if (distance_squared < radius_squared)
+        {
+            SDL_Rect pixel = (SDL_Rect){x, y, 1, 1}; // can be used to create the pixel
+            SDL_FillRect(s, &pixel, color);
+        }
+    }
+   }
+   
+}
 
 int main()
 {
@@ -28,12 +52,18 @@ int main()
 
     // retrieve the surface in case we need to draw anything to the window (a sheet)
     SDL_Surface *surface = SDL_GetWindowSurface(window);
-    SDL_Rect rect = (SDL_Rect){200, 200, 200, 200};
-    // rect.h, rect.w, rect.x, rect.y = 200;
-    SDL_FillRect(surface, &rect, COLOR_WHITE);
 
-    // changes to the surface will update here 
-    SDL_UpdateWindowSurface(window);
+    /* creation of a rectangle in sdl 
+     SDL_Rect rect = (SDL_Rect){200, 200, 200, 200};
+     rect.h, rect.w, rect.x, rect.y = 200;
+     SDL_FillRect(surface, &rect, COLOR_WHITE);
+    */
+
+    Circle circle = {300, 300, 80};
+    FillCircle(surface, circle, COLOR_WHITE);
+    SDL_UpdateWindowSurface(window);           // changes to the surface will update here
+
+
 
     // Check if window creation was successful
     if (!window) {
@@ -42,8 +72,6 @@ int main()
         SDL_Quit();  // Clean up initialized SDL subsystems
         return 1;    // Exit program with non-zero status indicating failure
     }
-
-
 
     // Declare an SDL event variable to handle events
     SDL_Event event;

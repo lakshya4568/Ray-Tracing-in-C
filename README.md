@@ -46,3 +46,21 @@ This project uses the SDL2 library for graphic rendering. Below is a brief expla
 This README provides an overview of the raytracing.c file, explaining the key components of the code and how to compile and run the program.
 
 
+### Creation of a cirlce In SDL 2
+> **NOTE**: SDL 2 does not have a built-in function to draw a circle. However, you can create a circle by drawing multiple points along the circumference of the circle. 
+
+```c 
+void FillCircle(SDL_Surface *s, Circle circle, Uint32 color) {};
+```
+
+* We can create a circle by treating each rectangle as a pixel, here we can use the equation of a circle to draw the circle.
+
+* By calculating, distance of radius, x and y corrdinate of the circle, and loop over it can give us the circle.
+
+* x-radius, x+radius, y-radius, y+radius are the boundries of the circle and looping over it can give us the circle.
+
+* we will take the distance square, and radius square and check if the distance square is less than the radius square, then circle will be drawn.
+
+### Movement of the Circle
+
+We can move the circle by changing the x and y coordinate of the circle. 
