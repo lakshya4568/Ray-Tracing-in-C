@@ -5,7 +5,10 @@
 
 #define WIDTH 900  
 #define HEIGHT 600
+#define RAYS_NUMBER 100
 #define COLOR_WHITE 0xffffffff
+#define COLOR_BLACK 0x00000000
+#define COLOR_YELLOW 0xefefefef
 
 typedef struct 
 {
@@ -14,22 +17,63 @@ typedef struct
     int r;
 } Circle;
 
-// Function for creation of a filled circle
-void FillCircle(SDL_Surface *s, Circle circle, Uint32 color) {
-   // looping the pixel length, from x-r to x+r and same for y coordinate for each pixel
-   double radius_squared = pow(circle.r, 2);
-   for (double x = circle.x-circle.r; x <= circle.x+circle.r; x++) {
-    for (double y = circle.y-circle.r; y <= circle.y+circle.r; y++)
+/**
+ * @brief A structure to represent a ray in 2D space.
+ *
+ * This structure defines a ray with an origin point and a direction vector.
+ * The origin represents the starting point of the ray, and the direction
+ * represents the direction in which the ray is pointing.
+ */
+typedef struct
+{
+    /**
+     * @brief Represents the angle of the ray in the ray tracing algorithm.
+     * 
+     * This variable holds the angle at which the ray is projected. It is used
+     * to calculate the direction and trajectory of the ray as it interacts
+     * with objects in the scene.
+     */
+    double angle;
+    /* Origin coordinate of ray to end of ray*/
+    double x_start, y_start;
+} Ray;
+
+/**
+ * @brief Generates an array of rays originating from a given circle.
+ *
+ * This function calculates and stores rays originating from the center of the specified circle.
+ * Each ray is defined by an angle and the circle's center coordinates.
+ *
+ * @param circle The circle from which the rays originate.
+ * @param rays An array to store the generated rays. The size of the array should be RAYS_NUMBER.
+ */
+void generate_rays(Circle circle, Ray rays[RAYS_NUMBER]) {
+    for (int i = 0; i < RAYS_NUMBER; i++)
     {
-        double distance_squared = pow(x - circle.x, 2) + pow(y - circle.y, 2);
-        if (distance_squared < radius_squared)
+        double angle = ((double)i / RAYS_NUMBER * 2 * M_PI);
+        Ray ray = {angle, circle.x, circle.y};
+        rays[i] = ray;
+        printf("Angle: %f\n", angle);
+    }
+} 
+
+// Function for creation of a filled circle
+void FillCircle(SDL_Surface *s, Circle circle, Uint32 color)
+{
+    // looping the pixel length, from x-r to x+r and same for y coordinate for each pixel
+    double radius_squared = pow(circle.r, 2);
+    for (double x = circle.x - circle.r; x <= circle.x + circle.r; x++)
+    {
+        for (double y = circle.y - circle.r; y <= circle.y + circle.r; y++)
         {
-            SDL_Rect pixel = (SDL_Rect){x, y, 1, 1}; // can be used to create the pixel
-            SDL_FillRect(s, &pixel, color);
+            double distance_squared = pow(x - circle.x, 2) + pow(y - circle.y, 2);
+            if (distance_squared < radius_squared)
+            {
+                SDL_Rect pixel = (SDL_Rect){x, y, 1, 1}; // can be used to create the pixel
+                SDL_FillRect(s, &pixel, color);
+            }
         }
     }
-   }
-   
 }
 
 int main()
@@ -60,6 +104,12 @@ int main()
     */
 
     Circle circle = {200, 200, 80};
+    SDL_Rect erase_rect = (SDL_Rect){0, 0, WIDTH, HEIGHT};
+
+    // shadow circle
+    Circle shadow_circle = {650, 300, 120};
+    Ray rays[RAYS_NUMBER];
+
 
     // Check if window creation was successful
     if (!window) {
@@ -86,12 +136,17 @@ int main()
             {
                 circle.x = event.motion.x;
                 circle.y = event.motion.y;
+                generate_rays(circle, rays);
             }
         }
         // Additional rendering and logic can be performed here
+
+        // we need to erase the circle from the frame before, with surface color, so that it looks the circle is moving
+        SDL_FillRect(surface, &erase_rect, COLOR_BLACK);
+        FillCircle(surface, shadow_circle, COLOR_WHITE); // shadow circle
         FillCircle(surface, circle, COLOR_WHITE);
         SDL_UpdateWindowSurface(window); // changes to the surface will update here
-        SDL_Delay(16);  // Delay to control frame rate; ~16ms for ~60 FPS
+        SDL_Delay(7);  // Delay to control frame rate; ~16ms for ~60 FPS
     }
 
     // Destroy the created window to free resources
