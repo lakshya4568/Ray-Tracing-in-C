@@ -14,7 +14,7 @@ typedef struct
     int r;
 } Circle;
 
-// function to create a filled circle
+// Function for creation of a filled circle
 void FillCircle(SDL_Surface *s, Circle circle, Uint32 color) {
    // looping the pixel length, from x-r to x+r and same for y coordinate for each pixel
    double radius_squared = pow(circle.r, 2);
@@ -59,11 +59,7 @@ int main()
      SDL_FillRect(surface, &rect, COLOR_WHITE);
     */
 
-    Circle circle = {300, 300, 80};
-    FillCircle(surface, circle, COLOR_WHITE);
-    SDL_UpdateWindowSurface(window);           // changes to the surface will update here
-
-
+    Circle circle = {200, 200, 80};
 
     // Check if window creation was successful
     if (!window) {
@@ -73,21 +69,28 @@ int main()
         return 1;    // Exit program with non-zero status indicating failure
     }
 
-    // Declare an SDL event variable to handle events
+    // Declare an SDL event variable to handle events for updation 
     SDL_Event event;
     int running = 1;  // Flag to control the main loop; 1 means running
 
     // Enter the main event loop
     while (running) {
-        // Process events in the queue
+        // Process events in the queue, it will store the value at each updation to the x, y coordinates of circle
         while (SDL_PollEvent(&event)) {
             // Check if the event is a quit event (e.g., window close)
-            if (event.type == SDL_QUIT) { 
-                running = 0;  // Set running to 0 to exit the loop
+            if (event.type == SDL_QUIT) { // by pressing cross (X) to exit window
+                running = 0;  
+            }
+            // logic of mouse event handle
+            if (event.type == SDL_MOUSEMOTION && event.motion.state != 0)
+            {
+                circle.x = event.motion.x;
+                circle.y = event.motion.y;
             }
         }
         // Additional rendering and logic can be performed here
-
+        FillCircle(surface, circle, COLOR_WHITE);
+        SDL_UpdateWindowSurface(window); // changes to the surface will update here
         SDL_Delay(16);  // Delay to control frame rate; ~16ms for ~60 FPS
     }
 
