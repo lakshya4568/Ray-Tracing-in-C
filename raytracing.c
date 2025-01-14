@@ -4,6 +4,9 @@
 
 #define WIDTH 900  
 #define HEIGHT 600
+#define COLOR_WHITE 0xffffffff
+
+
 
 int main()
 {
@@ -23,6 +26,15 @@ int main()
         SDL_WINDOW_SHOWN        // Window is visible upon creation
     );
 
+    // retrieve the surface in case we need to draw anything to the window (a sheet)
+    SDL_Surface *surface = SDL_GetWindowSurface(window);
+    SDL_Rect rect = (SDL_Rect){200, 200, 200, 200};
+    // rect.h, rect.w, rect.x, rect.y = 200;
+    SDL_FillRect(surface, &rect, COLOR_WHITE);
+
+    // changes to the surface will update here 
+    SDL_UpdateWindowSurface(window);
+
     // Check if window creation was successful
     if (!window) {
         // Print error message if window creation fails
@@ -30,6 +42,8 @@ int main()
         SDL_Quit();  // Clean up initialized SDL subsystems
         return 1;    // Exit program with non-zero status indicating failure
     }
+
+
 
     // Declare an SDL event variable to handle events
     SDL_Event event;
@@ -46,12 +60,14 @@ int main()
         }
         // Additional rendering and logic can be performed here
 
-        SDL_Delay(5000);  // Delay to control frame rate; ~16ms for ~60 FPS
+        SDL_Delay(16);  // Delay to control frame rate; ~16ms for ~60 FPS
     }
 
     // Destroy the created window to free resources
     SDL_DestroyWindow(window);
     SDL_Quit(); // Clean up all initialized SDL subsystems
+
+
 
     return 0;
 }
