@@ -3,12 +3,13 @@
 #include </opt/homebrew/include/sdl2/SDL.h>
 
 
-#define WIDTH 900  
-#define HEIGHT 600
+#define WIDTH 1000 
+#define HEIGHT 1000
 #define RAYS_NUMBER 200
 #define COLOR_WHITE 0xffffffff
 #define COLOR_BLACK 0x00000000
 #define COLOR_YELLOW 0xde2508
+#define RAY_THICKNESS 2
 
 typedef struct 
 {
@@ -35,7 +36,7 @@ typedef struct
      */
     double angle;
     /* Origin coordinate of ray to end of ray*/
-    double x_start, y_start;
+    double x_start, y_start; 
 } Ray;
 
 /**
@@ -74,8 +75,10 @@ void FillRays(SDL_Surface *surface, Ray rays[RAYS_NUMBER], Uint32 color) {
             x_draw += step * cos(ray.angle);
             y_draw += step * sin(ray.angle);
 
-            SDL_Rect pixel = (SDL_Rect){x_draw, y_draw, 1, 1}; // create pixel for each increment in ray;
+            SDL_Rect pixel = (SDL_Rect){x_draw, y_draw, RAY_THICKNESS, RAY_THICKNESS}; // create pixel for each increment in ray;
             SDL_FillRect(surface, &pixel, color);
+
+            
 
             if (x_draw < 0 || x_draw > WIDTH) 
             {
@@ -122,8 +125,8 @@ int main()
         "Ray Tracing",          // Window title
         SDL_WINDOWPOS_CENTERED, // Initial x position: centered on screen
         SDL_WINDOWPOS_CENTERED, // Initial y position: centered on screen
-        800,                    // Window width in pixels
-        600,                    // Window height in pixels
+        WIDTH,                    // Window width in pixels
+        HEIGHT,                    // Window height in pixels
         SDL_WINDOW_SHOWN        // Window is visible upon creation
     );
 
