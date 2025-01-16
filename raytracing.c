@@ -5,10 +5,10 @@
 
 #define WIDTH 900  
 #define HEIGHT 600
-#define RAYS_NUMBER 100
+#define RAYS_NUMBER 200
 #define COLOR_WHITE 0xffffffff
 #define COLOR_BLACK 0x00000000
-#define COLOR_YELLOW 0xefefefef
+#define COLOR_YELLOW 0xde2508
 
 typedef struct 
 {
@@ -55,7 +55,40 @@ void generate_rays(Circle circle, Ray rays[RAYS_NUMBER]) {
         rays[i] = ray;
         printf("Angle: %f\n", angle);
     }
-} 
+}
+
+void FillRays(SDL_Surface *surface, Ray rays[RAYS_NUMBER], Uint32 color) {
+    for (int i = 0; i < RAYS_NUMBER; i++)
+    {
+        Ray ray = rays[i];
+        int end_of_screen = 0;
+        int object_hit = 0;
+
+        int step = 1;
+
+        double x_draw = ray.x_start;
+        double y_draw = ray.y_start;
+
+        while (!end_of_screen && !object_hit)
+        {
+            x_draw += step * cos(ray.angle);
+            y_draw += step * sin(ray.angle);
+
+            SDL_Rect pixel = (SDL_Rect){x_draw, y_draw, 1, 1}; // create pixel for each increment in ray;
+            SDL_FillRect(surface, &pixel, color);
+
+            if (x_draw < 0 || x_draw > WIDTH) 
+            {
+                end_of_screen = 1;
+            }
+
+            if (y_draw < 0 || y_draw > HEIGHT)
+            {
+                end_of_screen = 1;
+            }
+        }
+    }
+}
 
 // Function for creation of a filled circle
 void FillCircle(SDL_Surface *s, Circle circle, Uint32 color)
@@ -145,14 +178,14 @@ int main()
         SDL_FillRect(surface, &erase_rect, COLOR_BLACK);
         FillCircle(surface, shadow_circle, COLOR_WHITE); // shadow circle
         FillCircle(surface, circle, COLOR_WHITE);
+        FillRays(surface, rays, COLOR_YELLOW);
         SDL_UpdateWindowSurface(window); // changes to the surface will update here
-        SDL_Delay(7);  // Delay to control frame rate; ~16ms for ~60 FPS
+        SDL_Delay(5);  // Delay to control frame rate; ~16ms for ~60 FPS
     }
 
     // Destroy the created window to free resources
     SDL_DestroyWindow(window);
     SDL_Quit(); // Clean up all initialized SDL subsystems
-
 
 
     return 0;
