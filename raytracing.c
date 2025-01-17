@@ -8,7 +8,7 @@
 #define RAYS_NUMBER 200
 #define COLOR_WHITE 0xffffffff
 #define COLOR_BLACK 0x00000000
-#define COLOR_YELLOW 0xde2508
+#define RAY_COLOR 0xde2508
 #define RAY_THICKNESS 2
 
 typedef struct 
@@ -58,7 +58,10 @@ void generate_rays(Circle circle, Ray rays[RAYS_NUMBER]) {
     }
 }
 
-void FillRays(SDL_Surface *surface, Ray rays[RAYS_NUMBER], Uint32 color) {
+void FillRays(SDL_Surface *surface, Ray rays[RAYS_NUMBER], Uint32 color, Circle Object) {
+
+    double radius_squared = pow(Object.r, 2);
+
     for (int i = 0; i < RAYS_NUMBER; i++)
     {
         Ray ray = rays[i];
@@ -78,7 +81,6 @@ void FillRays(SDL_Surface *surface, Ray rays[RAYS_NUMBER], Uint32 color) {
             SDL_Rect pixel = (SDL_Rect){x_draw, y_draw, RAY_THICKNESS, RAY_THICKNESS}; // create pixel for each increment in ray;
             SDL_FillRect(surface, &pixel, color);
 
-            
 
             if (x_draw < 0 || x_draw > WIDTH) 
             {
@@ -88,6 +90,13 @@ void FillRays(SDL_Surface *surface, Ray rays[RAYS_NUMBER], Uint32 color) {
             if (y_draw < 0 || y_draw > HEIGHT)
             {
                 end_of_screen = 1;
+            }
+
+            //does the ray hit the object, lets's check...
+            double distance_squared = pow(x_draw - Object.x, 2) + pow(y_draw - Object.y, 2);
+            if (distance_squared < radius_squared)
+            {
+                break;
             }
         }
     }
@@ -181,9 +190,9 @@ int main()
         SDL_FillRect(surface, &erase_rect, COLOR_BLACK);
         FillCircle(surface, shadow_circle, COLOR_WHITE); // shadow circle
         FillCircle(surface, circle, COLOR_WHITE);
-        FillRays(surface, rays, COLOR_YELLOW);
+        FillRays(surface, rays, RAY_COLOR, shadow_circle);
         SDL_UpdateWindowSurface(window); // changes to the surface will update here
-        SDL_Delay(5);  // Delay to control frame rate; ~16ms for ~60 FPS
+        SDL_Delay(16);  // Delay to control frame rate; ~16ms for ~60 FPS
     }
 
     // Destroy the created window to free resources

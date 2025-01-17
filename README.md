@@ -64,3 +64,11 @@ void FillCircle(SDL_Surface *s, Circle circle, Uint32 color) {};
 ### Movement of the Circle
 
 We can move the circle by changing the x and y coordinate of the circle. 
+
+#### Updating Circle Movements with SDL Events
+To update the circle movements, we handle SDL events in the main event loop. Specifically, we handle SDL_MOUSEMOTION events to update the circle's position based on the mouse's coordinates.
+
+1. **Event Handling for Circle Movement**
+  * In the main event loop, we check for `SDL_MOUSEMOTION` events.
+  * If a `SDL_MOUSEMOTION` event is detected and the mouse button is pressed, we update the circle's x and y coordinates to the mouse's current position.
+ 
