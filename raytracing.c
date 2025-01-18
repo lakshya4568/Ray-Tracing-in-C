@@ -2,10 +2,9 @@
 #include <math.h>
 #include </opt/homebrew/include/sdl2/SDL.h>
 
-
 #define WIDTH 1200
 #define HEIGHT 600
-#define RAYS_NUMBER 200
+#define RAYS_NUMBER 500
 #define COLOR_WHITE 0xffffffff
 #define COLOR_BLACK 0x00000000
 #define RAY_COLOR 0xf4d03f
@@ -34,11 +33,10 @@ typedef struct
      * to calculate the direction and trajectory of the ray as it interacts
      * with objects in the scene.
      */
-    double angle;
     /* Origin coordinate of ray to end of ray*/
-    double x_start, y_start; 
+    double x_start, y_start;
+    double angle;
 } Ray;
-
 
 // ...existing code...
 
@@ -140,9 +138,9 @@ void generate_rays(Circle circle, Ray rays[RAYS_NUMBER]) {
     for (int i = 0; i < RAYS_NUMBER; i++)
     {
         double angle = ((double)i / RAYS_NUMBER * 2 * M_PI);
-        Ray ray = {angle, circle.x, circle.y};
+        Ray ray = {circle.x, circle.y, angle};
         rays[i] = ray;
-        printf("Angle: %f\n", angle);
+        //printf("Angle: %f\n", angle);
     }
 }
 
@@ -163,7 +161,7 @@ void FillRays(SDL_Surface *surface, Ray rays[RAYS_NUMBER], Uint32 color, Circle 
 
     double radius_squared = pow(Object.r, 2);
 
-    for (int i = 0; i < RAYS_NUMBER; i++)
+    for (int i = 0; i <  RAYS_NUMBER; i++)
     {
         Ray ray = rays[i];
         int end_of_screen = 0;
@@ -243,30 +241,19 @@ int main()
     // retrieve the surface in case we need to draw anything to the window (a sheet)
     SDL_Surface *surface = SDL_GetWindowSurface(window);
 
-    SDL_Surface *offscreen = SDL_CreateRGBSurface(
-        0,
-        WIDTH * 2,
-        HEIGHT * 2,
-        32,
-        0x00FF0000,
-        0x0000FF00,
-        0x000000FF,
-        0xFF000000
-    );
-
     /* creation of a rectangle in sdl 
      SDL_Rect rect = (SDL_Rect){200, 200, 200, 200};
      rect.h, rect.w, rect.x, rect.y = 200;
      SDL_FillRect(surface, &rect, COLOR_WHITE);
     */
 
-    Circle circle = {200, 200, 70};
+    Circle circle = {200, 200, 40};
     SDL_Rect erase_rect = (SDL_Rect){0, 0, WIDTH, HEIGHT};
 
     // shadow circle
     Circle shadow_circle = {550, 300, 120};
     Ray rays[RAYS_NUMBER];
-
+    generate_rays(circle, rays);
 
     // Check if window creation was successful
     if (!window) {
@@ -301,16 +288,16 @@ int main()
 
         // we need to erase the circle from the frame before, with surface color, so that it looks the circle is moving
         SDL_FillRect(surface, &erase_rect, COLOR_BLACK);
+        FillRays(surface, rays, RAY_COLOR, shadow_circle);
         FillCircle(surface, shadow_circle, COLOR_WHITE); // shadow circle
         FillCircle(surface, circle, COLOR_WHITE); 
-        FillRays(surface, rays, RAY_COLOR, shadow_circle);
+
 
         //BasicAntialiasing(surface);
-
         // calculation about how the y-coordinate of the object should behave
         // when crossing with the speed and it's change in position w.r.t speed
         shadow_circle.y += speed;
-        if(shadow_circle.y + shadow_circle.r < 0) {
+        if(shadow_circle.y - shadow_circle.r < 0) {
             speed = -speed;
         } 
 
