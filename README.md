@@ -6,7 +6,7 @@ It's a computer graphics technique that mimics how light works in real life. It 
 
 ## Documentation
 
-This project uses the SDL2 library for graphic rendering. Below is a brief explanation of the key components of the code in 
+This project uses the SDL2 library for graphic rendering. Below is a brief explanation of the key components of the code in
 
 ### Key Components
 
@@ -29,112 +29,126 @@ This project uses the SDL2 library for graphic rendering. Below is a brief expla
 
 1. **Install SDL2 Library**
     - On macOS, you can install SDL2 using Homebrew:
+
       ```sh
       brew install sdl2
       ```
 
 2. **Compile the Code**
+
     ```sh
     gcc -o raytracing raytracing.c -I/opt/homebrew/include/SDL2 -D_THREAD_SAFE -L/opt/homebrew/lib -lSDL2
     ```
 
 3. **Run the Executable**
+
     ```sh
     ./raytracing
     ```
 
 This README provides an overview of the raytracing.c file, explaining the key components of the code and how to compile and run the program.
 
-
 ### Creation of a cirlce In SDL 2
-> **NOTE**: SDL 2 does not have a built-in function to draw a circle. However, you can create a circle by drawing multiple points along the circumference of the circle. 
+>
+> **NOTE**: SDL 2 does not have a built-in function to draw a circle. However, you can create a circle by drawing multiple points along the circumference of the circle.
 
-```c 
+```c
 void FillCircle(SDL_Surface *s, Circle circle, Uint32 color) {};
 ```
 
-* We can create a circle by treating each rectangle as a pixel, here we can use the equation of a circle to draw the circle.
+- We can create a circle by treating each rectangle as a pixel, here we can use the equation of a circle to draw the circle.
 
-* By calculating, distance of radius, x and y corrdinate of the circle, and loop over it can give us the circle.
+- By calculating, distance of radius, x and y corrdinate of the circle, and loop over it can give us the circle.
 
-* x-radius, x+radius, y-radius, y+radius are the boundries of the circle and looping over it can give us the circle.
+- x-radius, x+radius, y-radius, y+radius are the boundries of the circle and looping over it can give us the circle.
 
-* we will take the distance square, and radius square and check if the distance square is less than the radius square, then circle will be drawn.
+- we will take the distance square, and radius square and check if the distance square is less than the radius square, then circle will be drawn.
 
 ### Movement of the Circle
 
-We can move the circle by changing the x and y coordinate of the circle. 
+We can move the circle by changing the x and y coordinate of the circle.
 
 #### Updating Circle Movements with SDL Events
+
 To update the circle movements, we handle SDL events in the main event loop. Specifically, we handle SDL_MOUSEMOTION events to update the circle's position based on the mouse's coordinates.
 
 1. **Event Handling for Circle Movement**
-  * In the main event loop, we check for `SDL_MOUSEMOTION` events.
-  * If a `SDL_MOUSEMOTION` event is detected and the mouse button is pressed, we update the circle's x and y coordinates to the mouse's current position.
 
+- In the main event loop, we check for `SDL_MOUSEMOTION` events.
+- If a `SDL_MOUSEMOTION` event is detected and the mouse button is pressed, we update the circle's x and y coordinates to the mouse's current position.
 
 ### `BasicAntialiasing(SDL_Surface *surface)`
+
 Applies a basic box blur effect to smooth edges in the rendered image.
+
 - **Parameters:**
-    - `surface`: SDL surface to apply anti-aliasing to
+  - `surface`: SDL surface to apply anti-aliasing to
 - **Process:**
-    - Uses a 3x3 kernel to average neighboring pixels
-    - Handles surface locking for thread safety
-    - Processes RGB channels separately
-    - Creates temporary buffer to store original pixels
-    - Applies averaging calculation for each pixel
+  - Uses a 3x3 kernel to average neighboring pixels
+  - Handles surface locking for thread safety
+  - Processes RGB channels separately
+  - Creates temporary buffer to store original pixels
+  - Applies averaging calculation for each pixel
 
 ### `generate_rays(Circle circle, Ray rays[RAYS_NUMBER])`
+
 Creates an array of rays emanating from a circle's center point.
+
 - **Parameters:**
-    - `circle`: Source circle from which rays originate
-    - `rays`: Array to store generated rays
+  - `circle`: Source circle from which rays originate
+  - `rays`: Array to store generated rays
 - **Process:**
-    - Distributes rays evenly in 360 degrees
-    - Each ray stores starting position and angle
-    - Uses circle center as ray origin point
+  - Distributes rays evenly in 360 degrees
+  - Each ray stores starting position and angle
+  - Uses circle center as ray origin point
 
 ### `FillRays(SDL_Surface *surface, Ray rays[RAYS_NUMBER], Uint32 color, Circle Object)`
+
 Renders rays and handles ray-circle intersection calculations.
+
 - **Parameters:**
-    - `surface`: SDL surface to draw on
-    - `rays`: Array of rays to render
-    - `color`: Color of the rays
-    - `Object`: Circle to check for intersections
+  - `surface`: SDL surface to draw on
+  - `rays`: Array of rays to render
+  - `color`: Color of the rays
+  - `Object`: Circle to check for intersections
 - **Process:**
-    - Iterates through each ray
-    - Incrementally draws ray paths
-    - Checks for collisions with object
-    - Stops ray rendering at screen boundaries or object intersections
-    - Uses distance formula for collision detection
+  - Iterates through each ray
+  - Incrementally draws ray paths
+  - Checks for collisions with object
+  - Stops ray rendering at screen boundaries or object intersections
+  - Uses distance formula for collision detection
 
 ### `FillCircle(SDL_Surface *s, Circle circle, Uint32 color)`
+
 Draws a filled circle on the SDL surface.
+
 - **Parameters:**
-    - `s`: SDL surface to draw on
-    - `circle`: Circle structure containing position and radius
-    - `color`: Color to fill the circle with
+  - `s`: SDL surface to draw on
+  - `circle`: Circle structure containing position and radius
+  - `color`: Color to fill the circle with
 - **Process:**
-    - Uses distance formula to determine which pixels fall within circle
-    - Iterates through rectangular boundary of circle
-    - Fills pixels that fall within radius
-    - Creates solid circle appearance
+  - Uses distance formula to determine which pixels fall within circle
+  - Iterates through rectangular boundary of circle
+  - Fills pixels that fall within radius
+  - Creates solid circle appearance
 
 ### `main()`
-Main program loop and initialization.
-- **Process:**
-    - Initializes SDL video subsystem
-    - Creates window and gets surface
-    - Sets up initial circle and shadow circle objects
-    - Handles event loop for:
-        - Window closing
-        - Mouse movement
-        - Circle updates
-    - Manages animation timing
-    - Implements bouncing movement for shadow circle
-    - Cleans up resources on exit
 
-    # Ray Tracing Functions Documentation
+Main program loop and initialization.
+
+- **Process:**
+  - Initializes SDL video subsystem
+  - Creates window and gets surface
+  - Sets up initial circle and shadow circle objects
+  - Handles event loop for:
+    - Window closing
+    - Mouse movement
+    - Circle updates
+  - Manages animation timing
+  - Implements bouncing movement for shadow circle
+  - Cleans up resources on exit
+
+  ## Ray Tracing Functions Documentation
 
     | Function Name | Parameters | Return Type | Description |
     |--------------|------------|-------------|-------------|
@@ -143,23 +157,26 @@ Main program loop and initialization.
     | `FillRays` | `SDL_Surface *surface`, `Ray rays[RAYS_NUMBER]`, `Uint32 color`, `Circle Object` | `void` | Renders rays on the surface and handles ray-circle intersection detection. |
     | `FillCircle` | `SDL_Surface *s`, `Circle circle`, `Uint32 color` | `void` | Draws a filled circle on the surface using the specified color. |
 
-    ## Structures
+  ## Structures
 
-    ### Circle
+  ### Circle
+
     | Member | Type | Description |
     |--------|------|-------------|
     | `x` | `int` | X-coordinate of circle's center |
     | `y` | `int` | Y-coordinate of circle's center |
     | `r` | `int` | Radius of the circle |
 
-    ### Ray
+  ### Ray
+
     | Member | Type | Description |
     |--------|------|-------------|
     | `x_start` | `double` | Starting X-coordinate of the ray |
     | `y_start` | `double` | Starting Y-coordinate of the ray |
     | `angle` | `double` | Angle of the ray in radians |
 
-    ## Constants
+  ## Constants
+
     | Constant | Value | Description |
     |----------|-------|-------------|
     | `WIDTH` | 1200 | Window width in pixels |
@@ -167,76 +184,88 @@ Main program loop and initialization.
     | `RAYS_NUMBER` | 500 | Number of rays to generate |
     | `RAY_THICKNESS` | 2 | Thickness of rendered rays |
 
-    
-    # 2D Raytracing Project Documentation
+  ## 2D Raytracing Project Documentation
 
-    ## Overview
+  ## Overview
+
     This project implements a basic 2D raytracing system using C and SDL2. It demonstrates fundamental concepts of ray casting and collision detection in a real-time interactive environment.
 
-    ## Core Components
+  ## Core Components
 
-    ### Data Structures
+  ### Data Structures
+
     1. `Circle`: Represents circular objects with position (x, y) and radius (r)
     2. `Ray`: Defines rays with starting position and angle of propagation
 
-    ### Key Features
-    - Real-time ray casting from a movable source
-    - Dynamic shadow casting
-    - Interactive mouse control
-    - Collision detection between rays and circular objects
-    - Basic anti-aliasing implementation (optional feature)
+  ### Key Features
 
-    ### Technical Implementation
+  - Real-time ray casting from a movable source
+  - Dynamic shadow casting
+  - Interactive mouse control
+  - Collision detection between rays and circular objects
+  - Basic anti-aliasing implementation (optional feature)
 
-    #### Ray Generation
-    - Rays are generated in a 360-degree pattern around a source point
-    - Total of 500 rays (configurable via RAYS_NUMBER)
-    - Each ray is calculated using trigonometric functions for direction
+  ### Technical Implementation
 
-    #### Rendering System
-    - Uses SDL2 for window management and rendering
-    - Resolution: 1200x600 pixels
-    - Implements real-time surface updates
-    - Frame rate control (~60 FPS)
+  #### Ray Generation
 
-    #### Collision Detection
-    - Uses circle-ray intersection mathematics
-    - Distance-based collision calculation
-    - Efficient radius-squared comparisons
+  - Rays are generated in a 360-degree pattern around a source point
+  - Total of 500 rays (configurable via RAYS_NUMBER)
+  - Each ray is calculated using trigonometric functions for direction
 
-    #### Interactive Elements
-    - Mouse-controlled light source
-    - Bouncing shadow object
-    - Real-time ray updates
+  #### Rendering System
 
-    ## Performance Considerations
-    - Optimized ray casting using step-based increments
-    - Efficient memory management for surface operations
-    - Basic anti-aliasing available but optional due to performance impact
+  - Uses SDL2 for window management and rendering
+  - Resolution: 1200x600 pixels
+  - Implements real-time surface updates
+  - Frame rate control (~60 FPS)
 
-    ## Usage
+  #### Collision Detection
+
+  - Uses circle-ray intersection mathematics
+  - Distance-based collision calculation
+  - Efficient radius-squared comparisons
+
+  #### Interactive Elements
+
+  - Mouse-controlled light source
+  - Bouncing shadow object
+  - Real-time ray updates
+
+  ## Performance Considerations
+
+  - Optimized ray casting using step-based increments
+  - Efficient memory management for surface operations
+  - Basic anti-aliasing available but optional due to performance impact
+
+  ## Usage
+
     The program creates a window where users can:
     1. Move the light source (white circle) using mouse drag
     2. Observe real-time ray casting and shadow effects
     3. Watch the interaction with a bouncing circular obstacle
 
-    ## Technical Requirements
-    - SDL2 library
-    - C compiler with math.h support
-    - Minimum screen resolution support: 1200x600
+  ## Technical Requirements
 
-    ## Limitations
-    - Limited to circular objects for collision
-    - 2D environment only
-    - Fixed resolution
-    - Basic anti-aliasing might impact performance
+  - SDL2 library
+  - C compiler with math.h support
+  - Minimum screen resolution support: 1200x600
 
-    ## Future Improvements
-    - Multiple light sources support
-    - Different object shapes
-    - Optimized anti-aliasing
-    - Color and intensity gradients
-    - Dynamic resolution scaling
+  ## Limitations
+
+  - Limited to circular objects for collision
+  - 2D environment only
+  - Fixed resolution
+  - Basic anti-aliasing might impact performance
+
+  ## Future Improvements
+
+  - Multiple light sources support
+  - Different object shapes
+  - Optimized anti-aliasing
+  - Color and intensity gradients
+  - Dynamic resolution scaling
 
 ## Project Summary
+>
 > This project demonstrates a 2D ray tracing implementation in C using SDL2. It features real-time ray casting, dynamic shadow generation, and interactive mouse control. The system generates 500 rays in a 360-degree pattern from a movable light source, calculating collisions with circular objects. Key features include efficient collision detection, basic anti-aliasing, and a 60 FPS rendering system. The implementation showcases fundamental graphics programming concepts through a practical, interactive visualization running at 1200x600 resolution.
